@@ -47,13 +47,16 @@ function edgeSame(a,b)
 end
 
 function love.load( arg )
+  love.window.setMode(0,0,{fullscreen=true,fullscreentype="desktop"})
 	l={}
   r = {}
+  drawtree = false
+  drawd = false
   start = false
   points = {}
   edges = {}
   math.randomseed(os.clock()*100000000000)
-  for i=1,50 do  
+  for i=1,100 do  
     t = gen()
     if t~=nil then
       table.insert(r,{x=t.xx,y=t.yy,w=t.ww,h=t.hh})
@@ -109,7 +112,7 @@ function love.load( arg )
 end
 
 table.sort( r, tableSort)
-
+--This does something with timing?
   for i=1,#r-1 do
     print(r[i].x)
       rs = math.random(2)
@@ -135,7 +138,22 @@ table.sort( r, tableSort)
   
   start = true
 end
-
+function love.update(dt)
+   if love.keyboard.isDown("t") then   -- reduce the value
+      drawtree = true
+    else
+      drawtree = false
+   end
+   if love.keyboard.isDown("d") then   -- increase the value
+      drawd = true
+   else
+     drawd = false
+   end
+   if love.keyboard.isDown("escape") then
+     love.event.quit(0)
+   end
+   
+end
 function love.draw()
   
   if start == true then
@@ -159,8 +177,12 @@ function love.draw()
       if r[j].x~=nil then
         if r[j].w*r[j].h > 4500 then
         love.graphics.setColor(200,200,200,255)
+      elseif r[j].w*r[j].h > 3000 then
+        love.graphics.setColor(175,175,175,255)
       elseif r[j].w*r[j].h > 2000 then
         love.graphics.setColor(150,150,150,255)
+      elseif r[j].w*r[j].h > 1000 then
+        love.graphics.setColor(125,125,125,255)
       else
         love.graphics.setColor(100,100,100,255)
       end
@@ -170,13 +192,17 @@ function love.draw()
     
     for i, triangle in ipairs(triangles) do
       love.graphics.setColor(20,255,0,100)
-      --love.graphics.polygon("line",triangle.p1.x,triangle.p1.y,triangle.p2.x,triangle.p2.y,triangle.p3.x,triangle.p3.y)
+      if drawd == true then
+        love.graphics.polygon("line",triangle.p1.x,triangle.p1.y,triangle.p2.x,triangle.p2.y,triangle.p3.x,triangle.p3.y)
+      end
     end
     
     
     for i=1,#tree do
       love.graphics.setColor(255,0,0,100)
-      --love.graphics.line(tree[i].p1.x,tree[i].p1.y,tree[i].p2.x,tree[i].p2.y)
+      if drawtree == true then
+        love.graphics.line(tree[i].p1.x,tree[i].p1.y,tree[i].p2.x,tree[i].p2.y)
+      end
     end
     
     
